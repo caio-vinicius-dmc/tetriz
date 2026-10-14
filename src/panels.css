@@ -1,0 +1,168 @@
+.panel {
+  max-width: 600px;
+  margin: 60px auto;
+}
+h1 {
+  font-size: 40px;
+  font-weight: 600;
+  letter-spacing: -1.5px;
+  line-height: 1.2;
+}
+h2 {
+  font-size: 20px;
+}
+.panel p {
+  color: #9aabc4;
+  line-height: 1.8;
+}
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin: 30px 0;
+}
+.tabs button {
+  flex: 1;
+}
+.selected {
+  border-color: #8debdc;
+  color: #8debdc;
+}
+.record {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid #ffffff0c;
+  font-size: 14px;
+}
+.record small {
+  display: block;
+  font-size: 10px;
+  color: #8295b1;
+  margin-top: 5px;
+}
+.position {
+  color: #5c708f;
+  font-size: 13px;
+}
+.avatar {
+  font-size: 25px;
+  color: #ac94f7;
+}
+.points {
+  margin-left: auto;
+  color: #8debdc;
+  text-align: right;
+}
+.empty {
+  text-align: center;
+  padding: 50px 0;
+  color: #8debdc;
+}
+.empty p {
+  font-size: 13px;
+}
+.scrim {
+  position: fixed;
+  inset: 0;
+  background: #050916d9;
+  backdrop-filter: blur(12px);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal {
+  background: #111a2b;
+  border: 1px solid #ffffff19;
+  border-radius: 24px;
+  padding: 28px;
+  width: 100%;
+  max-width: 400px;
+  max-height: 90dvh;
+  overflow: auto;
+}
+.modal h1 {
+  font-size: 34px;
+  margin: 15px 0;
+}
+.modal h1 small {
+  font-size: 14px;
+  letter-spacing: 0;
+  color: #8a9bb4;
+}
+.modal p {
+  color: #95a6bf;
+  font-size: 13px;
+}
+.modal > button {
+  width: 100%;
+  margin-top: 12px;
+}
+.modal label {
+  display: block;
+  font-size: 12px;
+  color: #b1c0d6;
+  margin: 15px 0;
+}
+.modal input:not([type="checkbox"]),
+select {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px;
+  background: #080f20;
+  border: 1px solid #ffffff20;
+  border-radius: 9px;
+  color: white;
+  font: inherit;
+}
+.modal .setting {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+.setting input[type="checkbox"] {
+  accent-color: #8debdc;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.setting input[type="range"] {
+  width: 100px;
+}
+.setting small {
+  font-size: 10px;
+  line-height: 1.6;
+  display: block;
+  margin-top: 5px;
+  color: #8497b3;
+}
+.toast {
+  position: fixed;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  background: #d2fff3;
+  color: #102e35;
+  padding: 15px 22px;
+  border-radius: 12px;
+  font-size: 13px;
+  max-width: 90vw;
+  width: max-content;
+  box-shadow: 0 10px 30px #0005;
+}
+.reduced * {
+  transition: none !important;
+  animation: none !important;
+}
+
+.avatar img {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 10px;
+}

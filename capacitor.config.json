@@ -1,0 +1,6 @@
+{
+  "appId": "com.dynamicmotioncentury.tetriz",
+  "appName": "Tetriz",
+  "webDir": "dist",
+  "backgroundColor": "#080c1c"
+}
