@@ -17,7 +17,7 @@ Jogo de blocos para Android e iOS, criado pela **DMC — Dynamic Motion Century*
 | Para | Necessário |
 | --- | --- |
 | Jogar no navegador / compilar a interface | Node.js 22+ e npm |
-| Android | Android Studio 2025.2.1+ (JDK embutido) e Android SDK Platform 36 |
+| Android | Android Studio 2025.2.1+, Java 21 e Android SDK Platform 36 |
 | iOS | macOS com Xcode 26+ e conta Apple Developer para distribuir |
 | Ranking global (opcional) | Hospedagem com HTTPS, PHP 8.2+ (PDO MySQL e GD) e MariaDB/MySQL |
 

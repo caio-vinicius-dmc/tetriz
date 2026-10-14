@@ -50,20 +50,26 @@ Vale para Android e iOS. Precisa de **Node.js 22 ou superior**.
 | Ferramenta | Versão |
 | --- | --- |
 | Node.js | 22+ |
-| Android Studio | 2025.2.1+ (já inclui o Java) |
+| Android Studio | 2025.2.1+ |
+| Java (JDK) | **21**, baixado pelo próprio Android Studio (passo 4 abaixo) |
 | Android SDK Platform | 36, pelo SDK Manager do Android Studio |
+
+> **Use Java 21.** Versões novas do Android Studio trazem Java 25, que o Gradle deste projeto não suporta (erro `Unsupported class file major version 69`).
 
 ### Primeira vez
 
 1. Instale o Android Studio e aceite a instalação padrão do SDK.
 2. Em **Settings → Languages & Frameworks → Android SDK**, confirme que **API 36** está instalada.
-3. Abra o projeto e espere o **Gradle Sync** terminar, instalando o que ele pedir:
+3. Abra o projeto:
 
    ```sh
    npx cap open android
    ```
 
    Se não abrir sozinho, use **File → Open** no Android Studio e selecione a pasta `android`.
+
+4. Em **Settings → Build, Execution, Deployment → Build Tools → Gradle**, mude **Gradle JDK** para uma versão **21**. Se não houver nenhuma, clique em **Download JDK…**, escolha a versão 21 (por exemplo, JetBrains Runtime) e confirme. O JDK é salvo em `C:\Users\<usuário>\.jdks\`.
+5. Clique em **Sync Project with Gradle Files** (ícone do elefante) e espere terminar, instalando o que ele pedir.
 
 ### APK de teste
 
@@ -77,13 +83,13 @@ Vale para Android e iOS. Precisa de **Node.js 22 ou superior**.
 
 ```powershell
 npm run sync
-$env:JAVA_HOME = 'C:\Program Files\Android\Android Studio\jbr'
+$env:JAVA_HOME = (Get-ChildItem "$env:USERPROFILE\.jdks" -Directory -Filter '*21*' | Select-Object -First 1).FullName
 cd android
 .\gradlew.bat assembleDebug
 cd ..
 ```
 
-No macOS/Linux, use `./gradlew assembleDebug` com `JAVA_HOME` apontando para o JDK do Android Studio.
+A segunda linha aponta o Java 21 baixado no passo 4 e vale só para aquela janela do terminal. No macOS/Linux, use `./gradlew assembleDebug` com `JAVA_HOME` apontando para um JDK 21.
 
 O APK fica em `android/app/build/outputs/apk/debug/app-debug.apk`.
 
@@ -116,6 +122,7 @@ O APK debug é só para testes. Não o publique.
 | Erro | Solução |
 | --- | --- |
 | `JAVA_HOME is not set` | defina `JAVA_HOME` como acima ou gere pelo Android Studio |
+| `Unsupported class file major version 69` (ou outro número acima de 65) | o Gradle está usando um Java mais novo que o 21: ajuste o **Gradle JDK** (passo 4) ou o `JAVA_HOME` |
 | `SDK location not found` | abra o projeto uma vez no Android Studio para criar `android/local.properties` |
 | Mudança não aparece no app | faltou `npm run sync` antes de compilar |
 | Celular recusa instalar por cima | desinstale a versão antiga, assinada com outra chave |
