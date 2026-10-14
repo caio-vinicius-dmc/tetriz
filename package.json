@@ -1,6 +1,6 @@
 {
-  "name": "dmc-tetriz",
-  "version": "1.0.0",
+  "name": "tetriz",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -12,7 +12,8 @@
   "dependencies": {
     "@capacitor/android": "^8.0.0",
     "@capacitor/core": "^8.0.0",
-    "@capacitor/ios": "^8.0.0"
+    "@capacitor/ios": "^8.0.0",
+    "@fontsource-variable/outfit": "^5.3.0"
   },
   "devDependencies": {
     "@capacitor/cli": "^8.0.0",
@@ -28,6 +29,6 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/caio-vinicius-dmc/dmc-tetriz.git"
+    "url": "https://github.com/caio-vinicius-dmc/tetriz.git"
   }
 }

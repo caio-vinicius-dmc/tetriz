@@ -16,11 +16,22 @@ const paths = {
   pause: '<path d="M8 5v14M16 5v14" stroke-width="4"/>',
   swap: '<path d="M4 8h16m-4-4 4 4-4 4M20 16H4m4-4-4 4 4 4"/>',
   spark: '<path d="m12 2 3 7 7 3-7 3-3 7-3-7-7-3 7-3Z"/>',
+  code: '<path d="m8 7-5 5 5 5m8-10 5 5-5 5M14 4l-4 16"/>',
   offline:
     '<path d="m3 3 18 18M2 8a17 17 0 0 1 4-2m4-1a17 17 0 0 1 12 3M5 12a12 12 0 0 1 5-2m5 0a12 12 0 0 1 4 2m-11 4a6 6 0 0 1 7 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/>',
 };
 export const icon = (name) =>
   `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || paths.spark}</svg>`;
+export function brandMark() {
+  const cells = [
+    [0, 0, "#31dcff"],
+    [1, 0, "#9af05e"],
+    [2, 0, "#ffe464"],
+    [1, 1, "#cc77ff"],
+    [1, 2, "#ff597c"],
+  ];
+  return `<svg class="brand-mark" viewBox="0 0 36 36" aria-hidden="true">${cells.map(([x, y, c]) => `<rect x="${x * 12 + 1}" y="${y * 12 + 1}" width="10" height="10" rx="2.5" fill="${c}"/>`).join("")}</svg>`;
+}
 export function brandLogo() {
   return `<div class="logo" aria-label="Tetriz">${[..."TETRIZ"].map((c, i) => `<span style="--c:${["#31dcff", "#9af05e", "#ff597c", "#ffb24b", "#cc77ff", "#ffe464"][i]}" data-letter="${c}">${c}</span>`).join("")}</div>`;
 }

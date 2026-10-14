@@ -1,13 +1,13 @@
-# Tetriz · DMC
+# Tetriz
 
-Jogo de blocos para Android e iOS, criado pela **DMC — Dynamic Motion Century**. A partida funciona offline; o ranking global é opcional e não exige criação de conta.
+Jogo de blocos para Android e iOS, criado por **Caio Vinícius**. A partida funciona offline; o ranking global é opcional e não exige criação de conta.
 
 ## Recursos
 
 - Partida contínua com velocidade crescente, quatro dificuldades e encaixe automático opcional.
 - Controles por botões, teclado e arraste direto na peça.
 - Reserva, próximas peças e projeção de encaixe.
-- Layout vertical/horizontal, temas claro/escuro e 13 modelos visuais de blocos.
+- Tela cheia no celular, layout vertical/horizontal, temas claro/escuro e 13 modelos visuais de blocos.
 - Efeitos de linhas e combos configuráveis.
 - Progresso, preferências e recordes salvos no aparelho; retomada da partida pausada.
 - Publicação opcional de nome, avatar/foto e resultado no ranking global, com fila de reenvio para partidas jogadas offline.
@@ -24,8 +24,8 @@ Jogo de blocos para Android e iOS, criado pela **DMC — Dynamic Motion Century*
 ## Instalação
 
 ```sh
-git clone https://github.com/caio-vinicius-dmc/dmc-tetriz.git
-cd dmc-tetriz
+git clone https://github.com/caio-vinicius-dmc/tetriz.git
+cd tetriz
 npm ci
 npm run dev
 ```
@@ -114,7 +114,6 @@ Sem conta, os dados locais não são recuperáveis entre aparelhos e podem ser a
 ## Estrutura
 
 - `src/`: jogo e interface.
-- `public/`: recursos estáticos.
 - `server/`: API PHP, validação, schema e modelo de configuração.
 - `android/` e `ios/`: projetos nativos Capacitor.
 - `scripts/generate-icons.mjs`: regenera ícones e telas de abertura nativos (usa Playwright com o Google Chrome instalado no Windows).
@@ -122,4 +121,4 @@ Sem conta, os dados locais não são recuperáveis entre aparelhos e podem ser a
 
 ## Licença
 
-Distribuído sob a [licença MIT](LICENSE): uso, modificação e distribuição são livres, inclusive para fins comerciais, desde que o aviso de licença seja preservado. Dependências mantêm suas próprias licenças. A licença não concede direitos sobre marcas de terceiros mencionadas nos modelos visuais.
+Copyright © 2026 Caio Vinícius. Distribuído sob a [licença MIT](LICENSE): uso, modificação e distribuição são livres, inclusive para fins comerciais, desde que o aviso de licença seja preservado. Dependências mantêm suas próprias licenças; a fonte Outfit usa a SIL Open Font License 1.1. A licença não concede direitos sobre marcas de terceiros mencionadas nos modelos visuais.

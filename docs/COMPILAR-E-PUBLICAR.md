@@ -15,7 +15,7 @@ Passo a passo para gerar o app Android (APK/AAB) e iOS, testar no celular e envi
 | Testar no iPhone | Run pelo Xcode ou TestFlight |
 | Publicar na App Store | Archive enviado pelo Xcode |
 
-App: **Tetriz** · identificador `com.dynamicmotioncentury.tetriz` · Android 7.0+ · iOS 15+.
+App: **Tetriz** · identificador `com.caiovinicius.tetriz` · Android 7.0+ · iOS 15+.
 
 ## Preparar o projeto
 
@@ -165,7 +165,7 @@ Com Apple ID gratuito, o app instalado no iPhone expira em 7 dias. Para distribu
 
 Exige conta no Apple Developer Program.
 
-1. No [App Store Connect](https://appstoreconnect.apple.com), crie o app com o Bundle ID `com.dynamicmotioncentury.tetriz`.
+1. No [App Store Connect](https://appstoreconnect.apple.com), crie o app com o Bundle ID `com.caiovinicius.tetriz`.
 2. No Xcode, rode `npm run sync` antes e selecione o destino **Any iOS Device (arm64)**.
 3. Clique em **Product → Archive**.
 4. No Organizer que abrir, clique em **Distribute App → App Store Connect** e siga até o upload.

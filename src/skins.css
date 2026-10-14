@@ -91,17 +91,6 @@ body[data-theme="light"] .skin-card small {
 body[data-theme="light"] .skin-preview {
   background: linear-gradient(135deg, #edf3f8, #e1e8f2);
 }
-/* Preserve the supplied logo; compositing removes its background in both palettes. */
-body .dmc-logo {
-  background: transparent;
-}
-body .dmc-logo img {
-  mix-blend-mode: screen;
-}
-body[data-theme="light"] .dmc-logo img {
-  filter: invert(1);
-  mix-blend-mode: multiply;
-}
 body[data-screen="game"]:not([data-skin="standard"]) {
   --skin-surface: #141d2b;
   --skin-ink: #eef3fc;

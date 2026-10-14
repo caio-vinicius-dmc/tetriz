@@ -1,12 +1,16 @@
+import "@fontsource-variable/outfit";
 import "./style.css";
 import "./preferences.css";
 import "./polish.css";
 import "./skins.css";
+import "./game-ui.css";
+import { Capacitor, SystemBars } from "@capacitor/core";
+import { version } from "../package.json";
 import { SKINS, drawSkinCell, skinCards, paintPreviews } from "./skins.js";
 import { bindBoardGestures } from "./gestures.js";
 import { canvasContext } from "./canvas.js";
 let boardGestures;
-import { icon, brandLogo, blockArt } from "./visuals.js";
+import { icon, brandLogo, brandMark, blockArt } from "./visuals.js";
 import { Game, SHAPES, COLORS, DIFFICULTIES, rulesFor } from "./engine.js";
 import { load, persist } from "./storage.js";
 import { api, configured, photoUrl } from "./api.js";
@@ -32,6 +36,10 @@ const esc = (s) =>
       ],
   );
 const best = () => Math.max(0, ...data.records.map((r) => r.score));
+const REPOSITORY = "https://github.com/caio-vinicius-dmc/tetriz";
+function fullscreen() {
+  if (Capacitor.isNativePlatform()) SystemBars.hide().catch(() => {});
+}
 function save() {
   if (!persist(data))
     toast("Armazenamento cheio. Libere espaço para salvar o progresso.");
@@ -57,14 +65,14 @@ function shell(content) {
   document.body.style.setProperty("--skin-accent", skin.accent);
   document.body.style.setProperty("--skin-radius", `${skin.radius}px`);
   document.body.dataset.theme = data.settings.theme;
-  app.innerHTML = `<div class="ambient"></div><main>${content}</main>${screen === "game" ? "" : '<footer><span class="dmc-logo footer-logo"><img src="/dmc-logo.png" alt="DMC"></span><span>Dynamic Motion Century</span></footer>'}`;
+  app.innerHTML = `<div class="ambient"></div><main>${content}</main>${screen === "game" ? "" : "<footer><span>Criado por Caio Vinícius</span></footer>"}`;
   document.body.classList.toggle("reduced", !data.settings.motion);
 }
 function home() {
   screen = "home";
   paused = true;
   shell(
-    `<header><a class="brand" href="#"><span class="dmc-logo"><img src="/dmc-logo.png" alt="DMC"></span> <span class="brand-caption">GAMES STUDIO</span></a><span class="badge">${icon("offline")} 100% OFFLINE</span></header><section class="hero"><div class="hero-copy"><div class="eyebrow"><span></span> SEU PRÓXIMO RECORDE COMEÇA AQUI</div>${logo()}<p class="tagline">Desconecte do mundo.<br><strong>Entre no jogo.</strong></p></div><div class="hero-art">${blockArt()}<div class="art-caption"><i></i> CLÁSSICO NA ESSÊNCIA. NOVO EM CADA PARTIDA.</div></div><div class="home-actions"><div class="best">${icon("trophy")}<div><span>SEU RECORDE</span><strong>${number(best())} <small>PTS</small></strong></div><span class="best-detail">O próximo<br>é com você.</span></div><button id="play" class="primary">${icon("play")} <span>${data.session ? "Continuar partida" : "Jogar"}</span>${icon("right")}</button>${data.session ? `<button id="new-game" class="new-game">${icon("reset")}<span>Começar partida nova</span>${icon("right")}</button>` : ""}<div class="record-buttons"><button id="local" class="menu-tile"><span class="tile-icon">${icon("trophy")}</span><span>Meus recordes</span></button><button id="global" class="menu-tile"><span class="tile-icon">${icon("globe")}</span><span>Ranking global</span></button></div><div class="home-links"><button id="settings" class="menu-tile"><span class="tile-icon">${icon("settings")}</span><span>Configurações</span></button><button id="about" class="menu-tile"><span class="tile-icon">${icon("info")}</span><span>Sobre o Tetriz</span></button></div></div></section>`,
+    `<header><a class="brand" href="#" aria-label="Tetriz">${brandMark()}</a><span class="badge">${icon("offline")} 100% OFFLINE</span></header><section class="hero"><div class="hero-copy"><div class="eyebrow"><span></span> SEU PRÓXIMO RECORDE COMEÇA AQUI</div>${logo()}<p class="tagline">Desconecte do mundo.<br><strong>Entre no jogo.</strong></p></div><div class="hero-art">${blockArt()}<div class="art-caption"><i></i> CLÁSSICO NA ESSÊNCIA. NOVO EM CADA PARTIDA.</div></div><div class="home-actions"><div class="best">${icon("trophy")}<div><span>SEU RECORDE</span><strong>${number(best())} <small>PTS</small></strong></div><span class="best-detail">O próximo<br>é com você.</span></div><button id="play" class="primary">${icon("play")} <span>${data.session ? "Continuar partida" : "Jogar"}</span>${icon("right")}</button>${data.session ? `<button id="new-game" class="new-game">${icon("reset")}<span>Começar partida nova</span>${icon("right")}</button>` : ""}<div class="record-buttons"><button id="local" class="menu-tile"><span class="tile-icon">${icon("trophy")}</span><span>Meus recordes</span></button><button id="global" class="menu-tile"><span class="tile-icon">${icon("globe")}</span><span>Ranking global</span></button></div><div class="home-links"><button id="settings" class="menu-tile"><span class="tile-icon">${icon("settings")}</span><span>Configurações</span></button><button id="about" class="menu-tile"><span class="tile-icon">${icon("info")}</span><span>Sobre o Tetriz</span></button></div></div></section>`,
   );
   document.querySelector("#play").onclick = start;
   const newGameButton = document.querySelector("#new-game");
@@ -192,7 +200,7 @@ function publishLocal() {
 function about() {
   screen = "about";
   shell(
-    `<header><button id="back">← Voltar</button><span class="badge">FEITO PARA O SEU RITMO</span></header><section class="panel">${logo()}<h1>Pequenas peças.<br>Grandes possibilidades.</h1><p>Um jogo de blocos para jogar onde quiser, mesmo sem internet.</p><h2><span class="dmc-logo"><img src="/dmc-logo.png" alt="DMC"></span></h2><p>Dynamic Motion Century<br>Criadora do Tetriz · Versão 1.0</p><h2>Seus dados, suas escolhas</h2><p>Partidas e recordes ficam neste aparelho. Ao publicar, nome, avatar ou foto e resultado ficam visíveis no ranking global. A publicação é opcional. Desinstalar o aplicativo pode apagar os dados locais.</p><p>O ranking recebe resultados de partidas offline, sujeitos a verificações de plausibilidade.</p></section>`,
+    `<header><button id="back">← Voltar</button><span class="badge">VERSÃO ${version}</span></header><section class="panel about-panel">${logo()}<h1>Pequenas peças.<br>Grandes possibilidades.</h1><p>Um jogo de blocos para jogar onde quiser, mesmo sem internet.</p><h2>Criado por</h2><p class="about-author"><strong>Caio Vinícius</strong><br>Tetriz · Versão ${version}</p><h2>Código aberto</h2><p>O código-fonte completo está no GitHub:</p><a class="about-link" href="${REPOSITORY}" target="_blank" rel="noopener">${icon("code")}<span><strong>Ver no GitHub</strong><small>github.com/caio-vinicius-dmc/tetriz</small></span>${icon("right")}</a><h2>Licença</h2><p>Distribuído sob a <strong>licença MIT</strong>: você pode usar, copiar, modificar e distribuir o jogo livremente, inclusive para fins comerciais, desde que mantenha o aviso de copyright e de licença. O software é fornecido "no estado em que se encontra", sem garantias.</p><p class="about-small">Copyright © 2026 Caio Vinícius. A fonte Outfit é distribuída sob a SIL Open Font License 1.1, e as demais dependências mantêm suas próprias licenças.</p><h2>Seus dados, suas escolhas</h2><p>Partidas e recordes ficam neste aparelho. Ao publicar, nome, avatar ou foto e resultado ficam visíveis no ranking global. A publicação é opcional. Desinstalar o aplicativo pode apagar os dados locais.</p><p>O ranking recebe resultados de partidas offline, sujeitos a verificações de plausibilidade.</p></section>`,
   );
   document.querySelector("#back").onclick = home;
 }
@@ -225,7 +233,7 @@ async function records(global, page = 1) {
       document.querySelector("#status").textContent =
         `Ranking global · ${DIFFICULTIES[data.settings.difficulty].label}${data.settings.autoDrop ? " · Soltar automática" : ""}`;
       document.querySelector("#pages").innerHTML =
-        `<button id="prev" ${page === 1 ? "disabled" : ""}>← Anterior</button> <span>${page}</span> <button id="next" ${rows.length < 20 ? "disabled" : ""}>Próxima →</button>`;
+        `<button id="prev" aria-label="Página anterior" ${page === 1 ? "disabled" : ""}>${icon("arrow")}<span>Anterior</span></button><span class="page-number" aria-live="polite">Página <strong>${page}</strong></span><button id="next" aria-label="Próxima página" ${rows.length < 20 ? "disabled" : ""}><span>Próxima</span>${icon("right")}</button>`;
       document.querySelector("#prev").onclick = () => records(true, page - 1);
       document.querySelector("#next").onclick = () => records(true, page + 1);
     } catch (e) {
@@ -270,7 +278,7 @@ function start() {
   finishing = false;
   screen = "game";
   shell(
-    `<header class="game-header"><button id="exit" class="icon-button" aria-label="Voltar ao início">${icon("arrow")}</button><div class="game-title"><span class="wordmark">TETRIZ</span><small>ARRASTE PARA MOVER</small><div id="combo" role="status" aria-live="polite"></div></div><div class="game-header-actions"><button id="game-theme" class="icon-button theme-toggle" role="switch" aria-label="Tema escuro" aria-checked="${data.settings.theme === "dark"}"><span aria-hidden="true">☀</span><span aria-hidden="true">☾</span></button><button id="pause" class="icon-button" aria-label="Pausar partida">${icon("pause")}</button></div></header><section class="game"><div class="stats"><div class="score-stat"><small>PONTUAÇÃO</small><strong id="score">0</strong></div><div><small>NÍVEL</small><strong id="level">1</strong></div><div><small>LINHAS</small><strong id="lines">0</strong></div></div><div class="arena"><div class="board-wrap"><canvas id="board" width="300" height="600" aria-label="Tabuleiro do Tetriz"></canvas><canvas id="effects" width="300" height="600" aria-hidden="true"></canvas></div><aside class="game-rail"><div class="rail-card reserve-card"><small>RESERVA</small><canvas id="hold" width="96" height="96"></canvas></div><div class="rail-card next-card"><small>A SEGUIR</small><canvas id="next-piece" width="96" height="280"></canvas></div><div class="rail-best">${icon("trophy")}<small>RECORDE</small><strong>${number(best())}</strong></div></aside></div><div class="controls"><button id="hold-button" aria-label="Reservar ou trocar peça">${icon("swap")}<span>Trocar</span></button><button data-action="left" aria-label="Mover para esquerda">${icon("arrow")}<span>Esquerda</span></button><button data-action="rotate" aria-label="Girar peça">${icon("rotate")}<span>Girar</span></button><button data-action="right" aria-label="Mover para direita">${icon("right")}<span>Direita</span></button><button data-action="soft" aria-label="Acelerar queda">${icon("down")}<span>Acelerar</span></button><button class="drop" data-action="drop">${icon("drop")} <span>Soltar</span></button></div></section><div id="overlay"></div>`,
+    `<header class="game-header"><button id="exit" class="icon-button" aria-label="Voltar ao início">${icon("arrow")}</button><div class="game-title"><span class="wordmark">TETRIZ</span><div id="combo" role="status" aria-live="polite"></div></div><div class="game-header-actions"><button id="game-theme" class="icon-button theme-toggle" role="switch" aria-label="Tema escuro" aria-checked="${data.settings.theme === "dark"}"><span aria-hidden="true">☀</span><span aria-hidden="true">☾</span></button><button id="pause" class="icon-button" aria-label="Pausar partida">${icon("pause")}</button></div></header><section class="game"><div class="stats"><div class="score-stat"><small>Pontos</small><strong id="score">0</strong></div><div><small>Nível</small><strong id="level">1</strong></div><div><small>Linhas</small><strong id="lines">0</strong></div></div><div class="arena"><div class="board-wrap"><canvas id="board" width="300" height="600" aria-label="Tabuleiro do Tetriz"></canvas><canvas id="effects" width="300" height="600" aria-hidden="true"></canvas></div><aside class="game-rail"><div class="rail-card reserve-card"><small>Reserva</small><canvas id="hold" width="96" height="96"></canvas></div><div class="rail-card next-card"><small>Próximas</small><canvas id="next-piece" width="96" height="280"></canvas></div><div class="rail-card rail-best">${icon("trophy")}<small>Recorde</small><strong>${number(best())}</strong></div></aside></div><div class="controls"><button id="hold-button" aria-label="Reservar ou trocar peça">${icon("swap")}<span>Trocar</span></button><button data-action="left" aria-label="Mover para esquerda">${icon("arrow")}<span>Esquerda</span></button><button data-action="rotate" aria-label="Girar peça">${icon("rotate")}<span>Girar</span></button><button data-action="right" aria-label="Mover para direita">${icon("right")}<span>Direita</span></button><button data-action="soft" aria-label="Acelerar queda">${icon("down")}<span>Acelerar</span></button><button class="drop" data-action="drop">${icon("drop")} <span>Soltar</span></button></div></section><div id="overlay"></div>`,
   );
   document.querySelector("#game-theme").onclick = (e) => {
     data.settings.theme = data.settings.theme === "dark" ? "light" : "dark";
@@ -688,6 +696,10 @@ function frame(t) {
   }
   requestAnimationFrame(frame);
 }
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) fullscreen();
+});
+fullscreen();
 home();
 sync();
 requestAnimationFrame(frame);
