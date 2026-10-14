@@ -1,142 +1,196 @@
 # Compilar e publicar o Tetriz
 
-Guia conferido em 14/10/2026. Os projetos nativos existem e os arquivos web foram sincronizados. Isso não significa que um APK/AAB ou archive iOS assinado já foi gerado e validado: essa etapa depende do ambiente nativo e da assinatura da sua empresa.
+Passo a passo para gerar o app Android (APK/AAB) e iOS, testar no celular e enviar às lojas.
 
-## 1. Qual arquivo gerar
+- [Preparar o projeto](#preparar-o-projeto)
+- [Android](#android)
+- [iOS](#ios)
+- [Publicar atualizações](#publicar-atualizações)
+- [Antes de enviar às lojas](#antes-de-enviar-às-lojas)
 
-| Objetivo | Arquivo/caminho |
+| Quero… | Gerar |
 | --- | --- |
-| Instalar diretamente em Android para testar | APK |
-| Publicar na Google Play | AAB assinado, via Play App Signing |
-| Testar em iPhone | Xcode em dispositivo ou TestFlight |
-| Publicar na App Store | Archive do Xcode enviado ao App Store Connect |
+| Testar no Android | APK debug |
+| Publicar na Google Play | AAB assinado |
+| Testar no iPhone | Run pelo Xcode ou TestFlight |
+| Publicar na App Store | Archive enviado pelo Xcode |
 
-O AAB é usado para distribuição na Play Store; não é um APK para instalar diretamente. No iOS, o fluxo recomendado é enviar o archive pelo Xcode, sem precisar exportar manualmente um IPA. Fontes: [assinatura Android](https://developer.android.com/studio/publish/app-signing) e [upload Apple](https://developer.apple.com/help/app-store-connect/manage-builds/upload-builds).
+App: **Tetriz** · identificador `com.dynamicmotioncentury.tetriz` · Android 7.0+ · iOS 15+.
 
-## 2. Preparar o projeto
+## Preparar o projeto
 
-No Windows, abra PowerShell na pasta do projeto:
+Vale para Android e iOS. Precisa de **Node.js 22 ou superior**.
+
+1. Na pasta do projeto, instale as dependências:
+
+   ```sh
+   npm ci
+   ```
+
+2. *(Opcional, para o ranking)* Crie `.env.local` na raiz com a URL pública da API:
+
+   ```dotenv
+   VITE_API_BASE_URL=https://seu-dominio.com
+   ```
+
+   Sem esse arquivo o jogo funciona offline e o ranking fica desativado. Senhas e credenciais do banco **nunca** vão aqui, só no servidor.
+
+3. Compile o jogo e copie para os projetos nativos:
+
+   ```sh
+   npm run sync
+   ```
+
+> Rode `npm run sync` **sempre** antes de compilar: depois de mudar o jogo ou a URL da API. Sem isso, o app sai com a versão anterior.
+
+## Android
+
+### O que instalar
+
+| Ferramenta | Versão |
+| --- | --- |
+| Node.js | 22+ |
+| Android Studio | 2025.2.1+ (já inclui o Java) |
+| Android SDK Platform | 36, pelo SDK Manager do Android Studio |
+
+### Primeira vez
+
+1. Instale o Android Studio e aceite a instalação padrão do SDK.
+2. Em **Settings → Languages & Frameworks → Android SDK**, confirme que **API 36** está instalada.
+3. Abra o projeto e espere o **Gradle Sync** terminar, instalando o que ele pedir:
+
+   ```sh
+   npx cap open android
+   ```
+
+   Se não abrir sozinho, use **File → Open** no Android Studio e selecione a pasta `android`.
+
+### APK de teste
+
+**Pelo Android Studio:**
+
+1. Rode `npm run sync`.
+2. Clique em **Build → Generate App Bundles or APKs → Generate APKs**.
+3. Quando terminar, clique em **locate** no aviso do canto da tela.
+
+**Pelo terminal (Windows/PowerShell):**
 
 ```powershell
-Set-Location 'C:\caminho\para\dmc-tetriz'
-node --version
-npm ci
 npm run sync
-```
-
-`npm run sync` compila a interface e copia os arquivos para Android e iOS. Execute novamente sempre que alterar o jogo ou o endereço da API. O servidor Vite não precisa ficar ligado para o aplicativo instalado funcionar.
-
-Confira `.env.local` na raiz:
-
-```dotenv
-VITE_API_BASE_URL=https://tetriz.dynamicmotioncentury.com.br
-```
-
-Esse arquivo contém somente o endereço público. Senha do MariaDB, DSN e rate_secret ficam exclusivamente na Hostinger, em tetriz-private/config.php. Para trocar de banco, altere a configuração privada no servidor. Para trocar a URL da API, edite .env.local e compile novamente.
-
-Identificador atual: `com.dynamicmotioncentury.tetriz`. Nome: Tetriz. Use esse identificador nas duas lojas, salvo se decidir mudá-lo antes da primeira publicação. Trocar apenas appId no capacitor.config.json não renomeia projetos nativos já criados; namespace/applicationId e Bundle Identifier devem permanecer coerentes.
-
-## 3. Android: ferramentas
-
-Instale Android Studio 2025.2.1 ou superior e Node.js 22 ou superior. O Studio fornece o JDK; selecione seu JDK embutido nas configurações de Gradle. No SDK Manager, instale Android SDK Platform 36 e as ferramentas de build solicitadas pelo projeto. Requisitos: [Capacitor 8](https://capacitorjs.com/docs/getting-started/environment-setup).
-
-Configuração existente em android/variables.gradle: compileSdk 36, targetSdk 36, minSdk 24. Em android/app/build.gradle: versionCode 1 e versionName 1.0.
-
-Abra o projeto:
-
-```powershell
-npx cap open android
-```
-
-Se não abrir automaticamente, use Open no Android Studio e selecione a pasta android. Aguarde Gradle Sync e instale os componentes que forem solicitados.
-
-## 4. Android: APK de teste
-
-Com um Android conectado por USB e depuração USB habilitada, selecione o aparelho no Android Studio e clique Run. Também é possível usar um emulador.
-
-Para gerar um APK debug pelo terminal, com Android SDK e JDK configurados:
-
-```powershell
-Set-Location .\android
+$env:JAVA_HOME = 'C:\Program Files\Android\Android Studio\jbr'
+cd android
 .\gradlew.bat assembleDebug
+cd ..
 ```
 
-Saída padrão: `android/app/build/outputs/apk/debug/app-debug.apk`, relativa à raiz do projeto. Transfira para o celular e autorize a instalação dessa origem quando solicitado. Esse APK é para testes, não é o artefato de publicação.
+No macOS/Linux, use `./gradlew assembleDebug` com `JAVA_HOME` apontando para o JDK do Android Studio.
 
-Se o terminal não encontrar Java/SDK, use o Android Studio para configurar o ambiente antes de repetir. Não publique arquivos debug.
+O APK fica em `android/app/build/outputs/apk/debug/app-debug.apk`.
 
-## 5. Android: AAB assinado para a loja
+### Instalar no celular
 
-1. No Android Studio, abra Build → Generate Signed Bundle / APK.
-2. Escolha Android App Bundle e o módulo app.
-3. Na primeira vez, escolha Create new para criar sua upload key/keystore. Guarde o arquivo fora do repositório, por exemplo em uma pasta privada da DMC.
-4. Guarde o keystore, alias e senhas em local seguro, com backup. Não escreva senhas no build.gradle nem as envie no chat.
-5. Selecione release e gere o bundle. Nas próximas versões, use a mesma upload key.
-6. O assistente informa o destino. Conforme as opções escolhidas, o arquivo pode aparecer em android/app/release ou em android/app/build/outputs/bundle/release.
+- **Com cabo:** ative **Opções do desenvolvedor → Depuração USB**, conecte o celular e clique em **Run ▶** no Android Studio.
+- **Sem cabo:** envie o `app-debug.apk` ao celular, abra e autorize "instalar apps desconhecidos".
 
-A Google Play usa o AAB assinado com a upload key e o Play App Signing para distribuir as versões aos usuários. [Instruções oficiais de assinatura](https://developer.android.com/studio/publish/app-signing).
+O APK debug é só para testes. Não o publique.
 
-## 6. Android: enviar à Google Play
+### AAB para a Google Play
 
-1. Acesse a conta da empresa no [Play Console](https://play.google.com/console).
-2. Crie o aplicativo Tetriz e preencha idioma, descrição, categoria e dados de contato.
-3. Prepare ícone, imagens da loja e capturas obtidas do aplicativo final.
-4. Preencha privacidade, segurança dos dados, classificação indicativa, público-alvo e demais formulários exibidos pelo Console conforme o comportamento real do app.
-5. Comece por uma faixa de testes. Envie o AAB, configure Play App Signing quando solicitado e inclua notas da versão.
-6. Instale pelo link da faixa de testes e valide o aplicativo distribuído pela loja.
-7. Siga os requisitos de testes e verificações indicados para sua conta antes de solicitar produção. O Console mostra os requisitos aplicáveis; não presuma que o primeiro AAB já possa ir direto à produção.
+1. Rode `npm run sync` e abra o projeto no Android Studio.
+2. Clique em **Build → Generate Signed Bundle / APK → Android App Bundle**.
+3. Na primeira vez, clique em **Create new** para criar a keystore (chave de upload).
+4. Escolha **release** e gere. O arquivo fica em `android/app/release/` ou `android/app/build/outputs/bundle/release/`.
 
-## 7. iOS: preparar no Mac
+> **Guarde a keystore, o alias e as senhas com backup, fora do repositório.** Todas as próximas versões precisam ser assinadas com a mesma chave.
 
-A compilação local de iOS exige macOS, Xcode 26 ou superior, ferramentas de linha de comando e Node.js 22 ou superior para este Capacitor 8. [Requisitos oficiais](https://capacitorjs.com/docs/getting-started/environment-setup).
+### Enviar à Google Play
 
-Leve o projeto ao Mac incluindo src, public, android, ios, package.json, package-lock.json e capacitor.config.json. Crie .env.local no Mac com a URL pública acima. Não transfira node_modules, caches, server/private ou credenciais do banco.
+1. No [Play Console](https://play.google.com/console), crie o app e preencha descrição, categoria, ícone, capturas de tela e contato.
+2. Preencha os formulários de privacidade, segurança dos dados, classificação indicativa e público-alvo.
+3. Em uma faixa de **teste**, envie o AAB e aceite o **Play App Signing**.
+4. Instale pelo link de teste e confira o app.
+5. Cumpra os requisitos de teste que o Console mostrar para a sua conta e só então promova para **produção**.
 
-No Terminal, dentro da pasta copiada:
+### Problemas comuns
 
-```sh
-npm ci
-npm run sync
-npx cap open ios
-```
+| Erro | Solução |
+| --- | --- |
+| `JAVA_HOME is not set` | defina `JAVA_HOME` como acima ou gere pelo Android Studio |
+| `SDK location not found` | abra o projeto uma vez no Android Studio para criar `android/local.properties` |
+| Mudança não aparece no app | faltou `npm run sync` antes de compilar |
+| Celular recusa instalar por cima | desinstale a versão antiga, assinada com outra chave |
 
-Este projeto usa Swift Package Manager; aguarde a resolução dos pacotes no Xcode. Não é necessário executar pod install para esta estrutura. Se a abertura automática falhar, abra ios/App/App.xcodeproj.
+## iOS
 
-## 8. iOS: assinatura e teste
+### O que instalar
 
-1. Adicione a conta Apple ao Xcode e selecione o target App.
-2. Em Signing & Capabilities, selecione o Team da DMC e a assinatura automática.
-3. Confira Bundle Identifier: com.dynamicmotioncentury.tetriz.
-4. Confira nome Tetriz, Version 1.0 e Build 1.
-5. Selecione um simulador e execute Run. Depois teste em iPhone físico, configurando a assinatura do aparelho.
-6. Para distribuir via TestFlight/App Store, use uma conta participante do Apple Developer Program.
+Compilar para iOS **exige um Mac**.
 
-## 9. iOS: Archive, TestFlight e App Store
+| Ferramenta | Versão |
+| --- | --- |
+| macOS + Xcode | Xcode 26+, pela App Store do Mac |
+| Node.js | 22+ |
+| Conta Apple | Apple ID gratuito para testar no próprio iPhone; **Apple Developer Program** (pago) para TestFlight e App Store |
 
-1. No App Store Connect, crie o registro do aplicativo com o Bundle ID correspondente.
-2. No Xcode, selecione um destino de dispositivo genérico compatível, não um simulador.
-3. Execute Product → Archive.
-4. No Organizer, selecione o archive e use Distribute App → App Store Connect. Siga a validação e o upload apresentados pelo Xcode.
-5. Aguarde o processamento no App Store Connect e teste via TestFlight.
-6. Preencha os dados da versão, capturas, privacidade, classificação, suporte e informações para revisão.
-7. Selecione a build processada, responda às perguntas de exportação/criptografia conforme o app real e envie para revisão.
+### Primeira vez
 
-O upload e o processamento não equivalem à aprovação da loja. [Upload oficial Apple](https://developer.apple.com/help/app-store-connect/manage-builds/upload-builds) e [seleção da build](https://developer.apple.com/help/app-store-connect/manage-builds/choose-a-build-to-submit/).
+1. Instale o Xcode, abra-o uma vez e aceite os componentes adicionais.
+2. Clone o repositório no Mac e siga [Preparar o projeto](#preparar-o-projeto), recriando o `.env.local` se usar o ranking.
+3. Abra o projeto:
 
-## 10. Publicar atualizações
+   ```sh
+   npx cap open ios
+   ```
 
-- Android: aumente versionCode a cada envio; altere versionName quando mudar a versão exibida. Arquivo: android/app/build.gradle.
-- iOS: aumente Build a cada novo upload; altere Version quando mudar a versão comercial. Faça isso no target App do Xcode.
-- Execute npm run sync depois de mudanças na interface/API.
-- Compile novamente, assine e envie a nova build.
-- Atualizar só a versão em package.json não aumenta automaticamente versionCode ou Build.
+   Se não abrir sozinho, abra `ios/App/App.xcodeproj`. Espere o Xcode baixar os pacotes (Swift Package Manager). Não é preciso rodar `pod install`.
 
-## 11. Verificação antes do envio
+4. Em **Xcode → Settings → Accounts**, adicione sua conta Apple.
+5. Selecione o target **App → Signing & Capabilities**, marque **Automatically manage signing** e escolha o **Team**.
 
-Teste em aparelhos físicos: instalação nova, abertura sem internet, fim de partida, recordes locais, retomada pausada, orientação horizontal/vertical, gestos, temas e efeitos. Com internet, confirme ranking e envio/reenvio, inclusive após jogar offline.
+### Testar
 
-A API da Hostinger precisa estar na versão atual: consulta records deve devolver records, page e rules. Configure as origens https://localhost (Android) e capacitor://localhost (iOS). O app usa HTTPS; não habilite cleartext para contornar problemas de configuração.
+- **Simulador:** escolha um iPhone na barra superior do Xcode e clique em **Run ▶**.
+- **iPhone real:** conecte o cabo, confie no computador e ative **Ajustes → Privacidade e Segurança → Modo de Desenvolvedor**. Depois selecione o aparelho no Xcode e clique em **Run ▶**.
 
-Complete política de privacidade e contato real da DMC. Confira os ícones e telas de abertura no aplicativo nativo. Como nomes/fotos podem ser públicos, o projeto ainda precisa de um fluxo adequado de moderação/denúncia e remoção antes do lançamento amplo; a versão atual não entrega esses controles. Revise também os nomes dos modelos que fazem referência a outras marcas antes de preparar o material público da loja.
+Com Apple ID gratuito, o app instalado no iPhone expira em 7 dias. Para distribuir a outras pessoas, use o TestFlight.
 
-Estado atual: testes web e sincronização concluídos. Builds nativas assinadas, testes físicos e publicação ainda dependem das ferramentas/contas acima. Nenhum APK/AAB/IPA de produção é fornecido por este guia.
+### TestFlight e App Store
+
+Exige conta no Apple Developer Program.
+
+1. No [App Store Connect](https://appstoreconnect.apple.com), crie o app com o Bundle ID `com.dynamicmotioncentury.tetriz`.
+2. No Xcode, rode `npm run sync` antes e selecione o destino **Any iOS Device (arm64)**.
+3. Clique em **Product → Archive**.
+4. No Organizer que abrir, clique em **Distribute App → App Store Connect** e siga até o upload.
+5. Aguarde o processamento e teste pelo **TestFlight**.
+6. Preencha descrição, capturas, privacidade, classificação e suporte. Depois selecione a build e envie para **revisão**.
+
+### Problemas comuns
+
+| Erro | Solução |
+| --- | --- |
+| "Signing requires a development team" | escolha o Team em **Signing & Capabilities** |
+| iPhone não aparece no Xcode | desbloqueie, confie no computador e ative o Modo de Desenvolvedor |
+| Pacotes não resolvem | **File → Packages → Reset Package Caches** |
+| Mudança não aparece no app | faltou `npm run sync` antes de compilar |
+
+## Publicar atualizações
+
+1. Aumente a versão:
+   - **Android:** em `android/app/build.gradle`, aumente `versionCode` a cada envio (1, 2, 3…) e mude `versionName` (ex.: `1.1`) quando quiser.
+   - **iOS:** no target **App → General**, aumente **Build** a cada envio e mude **Version** quando quiser.
+2. Rode `npm run sync`.
+3. Gere e assine de novo (AAB ou Archive) e envie.
+
+A versão do `package.json` não altera a versão dos apps.
+
+## Antes de enviar às lojas
+
+- Teste em aparelhos reais: instalação nova, jogar sem internet, recordes, pausa e retomada, orientação, gestos, temas e efeitos.
+- Com internet, confira o ranking e o reenvio de partidas jogadas offline.
+- A API deve responder em `https://seu-dominio.com/index.php?route=records&rules=1` e permitir as origens `https://localhost` (Android) e `capacitor://localhost` (iOS). Não habilite HTTP sem criptografia para contornar erros.
+- Publique uma política de privacidade e um contato de suporte.
+- Como nomes e fotos do ranking são públicos, implemente moderação, denúncia e remoção antes do lançamento amplo.
+- Revise os modelos visuais que citam marcas de terceiros antes de preparar as imagens da loja.
+
+Referências oficiais: [ambiente Capacitor](https://capacitorjs.com/docs/getting-started/environment-setup) · [assinatura Android](https://developer.android.com/studio/publish/app-signing) · [envio de builds Apple](https://developer.apple.com/help/app-store-connect/manage-builds/upload-builds).

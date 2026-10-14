@@ -89,7 +89,10 @@ npx cap open android
 npx cap open ios
 ```
 
-Android: gere APK para testes e AAB assinado para a Google Play. iOS: assine no Xcode e envie o archive ao App Store Connect. O passo a passo completo, incluindo assinatura, versões e checklist antes do envio às lojas, está em [Compilar e publicar](docs/COMPILAR-E-PUBLICAR.md).
+- **Android:** APK para testes e AAB assinado para a Google Play. [Passo a passo](docs/COMPILAR-E-PUBLICAR.md#android).
+- **iOS (exige Mac):** Run no Xcode para testar, Archive para TestFlight e App Store. [Passo a passo](docs/COMPILAR-E-PUBLICAR.md#ios).
+
+O [guia completo](docs/COMPILAR-E-PUBLICAR.md) também explica como publicar atualizações e o que revisar antes de enviar às lojas.
 
 Chaves de assinatura, senhas e configurações locais não fazem parte do repositório.
 
