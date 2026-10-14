@@ -116,7 +116,8 @@ Sem conta, os dados locais não são recuperáveis entre aparelhos e podem ser a
 - `src/`: jogo e interface.
 - `server/`: API PHP, validação, schema e modelo de configuração.
 - `android/` e `ios/`: projetos nativos Capacitor.
-- `scripts/generate-icons.mjs`: regenera ícones e telas de abertura nativos (usa Playwright com o Google Chrome instalado no Windows).
+- `resources/`: logo original do ícone (`icon-source.jpg`) e versão recortada (`icon.png`).
+- `scripts/generate-icons.mjs`: gera os ícones Android/iOS a partir da logo e as telas de abertura (`node scripts/generate-icons.mjs`; usa Playwright com o Google Chrome instalado no Windows).
 - `docs/`: guia de compilação e publicação.
 
 ## Licença
